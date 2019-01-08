@@ -34,12 +34,14 @@ public class Send {
         System.out.println(" [x] Sent'" + message + "'");
         //异步监听确认和未确认的消息
         channel.addConfirmListener(new ConfirmListener() {
+            //消息正确到达broker
             @Override
             public void handleAck(long deliveryTag, boolean multiple) throws IOException {
                 System.out.println("已收到消息");
                 System.out.println(String.format("已确认消息，标识：%d，多个消息：%b", deliveryTag, multiple));
             }
 
+            //RabbitMQ因为自身内部错误导致消息丢失，就会发送一条nack消息
             @Override
             public void handleNack(long deliveryTag, boolean multiple) throws IOException {
                 System.out.println("未确认消息，标识：" + deliveryTag);
