@@ -31,9 +31,13 @@ public class Receive {
 
         System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(" [x] Received '" + message + "'");
-            channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+            try {
+                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                System.out.println(" [x] Received '" + message + "'");
+                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+            } catch (Exception e) {
+                channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, true);
+            }
         };
         channel.basicConsume(QUEUE_NAME, false, deliverCallback, consumerTag -> {
         });
